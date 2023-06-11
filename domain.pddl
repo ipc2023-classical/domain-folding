@@ -1,5 +1,5 @@
 (define (domain reverse-folding)
-(:requirements :adl :action-costs :fluents)
+(:requirements :adl :action-costs)
 
 (:types
     node - object
