@@ -1,0 +1,42 @@
+;; Cost: 5
+;; Length: 40
+(rotate n3 clockwise up right) ;; cost: 1
+(rotate-first-pass n3 clockwise n3 n4 c8 c11 up right) ;; cost: 0
+(rotate-first-pass n3 clockwise n4 n5 c8 c12 up right) ;; cost: 0
+(rotate-first-pass n3 clockwise n5 n6 c8 c13 up right) ;; cost: 0
+(rotate-first-pass n3 clockwise n6 n7 c8 c14 up right) ;; cost: 0
+(rotate-first-pass-end n3 clockwise n7 n8 c8 c15) ;; cost: 0
+(rotate-second-pass n3 c8 c10 right n4 c9 c10) ;; cost: 0
+(rotate-second-pass n4 c9 c10 right n5 c10 c10) ;; cost: 0
+(rotate-second-pass n5 c10 c10 right n6 c11 c10) ;; cost: 0
+(rotate-second-pass n6 c11 c10 right n7 c12 c10) ;; cost: 0
+(rotate-second-pass n7 c12 c10 right n8 c13 c10) ;; cost: 0
+(rotate-second-pass-end n8) ;; cost: 0
+(rotate n4 clockwise right down) ;; cost: 1
+(rotate-first-pass n4 clockwise n4 n5 c10 c10 right down) ;; cost: 0
+(rotate-first-pass n4 clockwise n5 n6 c11 c10 right down) ;; cost: 0
+(rotate-first-pass n4 clockwise n6 n7 c12 c10 right down) ;; cost: 0
+(rotate-first-pass-end n4 clockwise n7 n8 c13 c10) ;; cost: 0
+(rotate-second-pass n4 c9 c10 down n5 c9 c9) ;; cost: 0
+(rotate-second-pass n5 c9 c9 down n6 c9 c8) ;; cost: 0
+(rotate-second-pass n6 c9 c8 down n7 c9 c7) ;; cost: 0
+(rotate-second-pass n7 c9 c7 down n8 c9 c6) ;; cost: 0
+(rotate-second-pass-end n8) ;; cost: 0
+(rotate n5 counterclockwise down right) ;; cost: 1
+(rotate-first-pass n5 counterclockwise n5 n6 c9 c8 down right) ;; cost: 0
+(rotate-first-pass n5 counterclockwise n6 n7 c9 c7 down right) ;; cost: 0
+(rotate-first-pass-end n5 counterclockwise n7 n8 c9 c6) ;; cost: 0
+(rotate-second-pass n5 c9 c9 right n6 c10 c9) ;; cost: 0
+(rotate-second-pass n6 c10 c9 right n7 c11 c9) ;; cost: 0
+(rotate-second-pass n7 c11 c9 right n8 c12 c9) ;; cost: 0
+(rotate-second-pass-end n8) ;; cost: 0
+(rotate n6 clockwise right down) ;; cost: 1
+(rotate-first-pass n6 clockwise n6 n7 c11 c9 right down) ;; cost: 0
+(rotate-first-pass-end n6 clockwise n7 n8 c12 c9) ;; cost: 0
+(rotate-second-pass n6 c10 c9 down n7 c10 c8) ;; cost: 0
+(rotate-second-pass n7 c10 c8 down n8 c10 c7) ;; cost: 0
+(rotate-second-pass-end n8) ;; cost: 0
+(rotate n7 counterclockwise down right) ;; cost: 1
+(rotate-first-pass-end n7 counterclockwise n7 n8 c10 c7) ;; cost: 0
+(rotate-second-pass n7 c10 c8 right n8 c11 c8) ;; cost: 0
+(rotate-second-pass-end n8) ;; cost: 0
