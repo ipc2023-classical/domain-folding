@@ -2,6 +2,7 @@
 
 import sys
 import random
+import copy
 
 next_direction = {
         ('up', 'clockwise') : 'right',
@@ -14,46 +15,113 @@ next_direction = {
         ('right', 'counterclockwise') : 'up',
 }
 
-def _genGoal(num_folds, num_nodes):
-    nodes = list(range(1, num_nodes))
-    random.shuffle(nodes)
-    nodes = sorted(nodes[:num_folds])
-    folds = {}
-    for n in nodes:
-        f = random.choice(['clockwise', 'counterclockwise'])
-        folds[n] = f
-
-    img = [[' ' for _ in range(num_nodes * 4)] for __ in range(num_nodes * 4)]
+def subplan(state_pos, state_dir, node, rot, next_pos, next_dir):
+    num_nodes = len(state_pos)
     plan = []
-    direction = ['up' for _ in range(num_nodes)]
-    direction = 'up'
+    plan += [f'(rotate n{node} {rot} {state_dir[node - 1]} {next_dir[node - 1]})']
+    for n in range(node - 1, num_nodes - 1):
+        n1 = n + 1
+        n2 = n + 2
+        (x, y) = state_pos[n2 - 1]
+        if n2 - 1 < len(state_dir):
+            d1 = state_dir[n2 - 1]
+            d2 = next_dir[n2 - 1]
+            a = f'(rotate-first-pass n{node} {rot} n{n1} n{n2} c{x} c{y} {d1} {d2})'
+        else:
+            a = f'(rotate-first-pass-end n{node} {rot} n{n1} n{n2} c{x} c{y})'
+        plan += [a]
+
+    for n in range(node - 1, num_nodes - 1):
+        n1 = n + 1
+        n2 = n + 2
+        (x1, y1) = next_pos[n1 - 1]
+        d1 = next_dir[n1 - 1]
+        (x2, y2) = next_pos[n2 - 1]
+        a = f'(rotate-second-pass n{n1} c{x1} c{y1} {d1} n{n2} c{x2} c{y2})'
+        plan += [a]
+    plan += [f'(rotate-second-pass-end n{num_nodes})']
+    return plan
+
+def rotate(state_dr, node, rot):
+    dr = copy.deepcopy(state_dr)
+
+    for idx in range(node - 1, len(state_dr)):
+        dr[idx] = next_direction[(dr[idx], rot)]
+    assert(len(state_dr) == len(dr))
+
+    num_nodes = len(state_dr) + 1
     pos = [(num_nodes, num_nodes)]
-    img[2 * num_nodes][2 * num_nodes] = 'x'
     for n in range(1, num_nodes):
-        if n in folds:
-            f = folds[n]
-            next = next_direction[(direction, f)]
-            plan += [f'(rotate n{n} {f} {direction} {next})']
-            direction = next
+        direction = dr[n - 1]
         x = pos[-1][0]
         y = pos[-1][1]
         if direction == 'up':
-            img[2 * y + 1][2 * x] = '|'
             y += 1
         elif direction == 'down':
-            img[2 * y - 1][2 * x] = '|'
             y -= 1
         elif direction == 'left':
-            img[2 * y][2 * x - 1] = '-'
             x -= 1
         elif direction == 'right':
-            img[2 * y][2 * x + 1] = '-'
             x += 1
-        next_pos = (x, y)
-        if next_pos in pos:
-            return None, None, None
-        img[2 * y][2 * x] = '.'
+        if (x, y) in pos:
+            return None, None
         pos += [(x, y)]
+
+    return pos, dr
+
+def _genGoal(num_folds, num_nodes, scenario = 'zigzag'):
+    # Initial state
+    state_pos = [(num_nodes, num_nodes)]
+    state_dir = []
+    for i in range(1, num_nodes):
+        state_pos += [(num_nodes, state_pos[-1][1] + 1)]
+        state_dir += ['up']
+
+    # Select nodes that and the direction of rotation
+    nodes = list(range(1, num_nodes))
+    random.shuffle(nodes)
+    nodes = nodes[:num_folds]
+    folds = {}
+    for n in nodes:
+        if scenario == 'zigzag':
+            f = random.choice(['clockwise', 'counterclockwise'])
+        elif scenario == 'spiral':
+            f = 'clockwise'
+        elif scenario == 'bias-spiral':
+            f = random.choice(['clockwise', 'clockwise', 'clockwise', 'counterclockwise'])
+        else:
+            print(f'Error: Unkown scenario {scenario}', file = sys.stderr)
+            sys.exit(-1)
+        folds[n] = f
+
+    # Apply and generate the plan
+    plan = []
+    for n in nodes:
+        next_pos, next_dir = rotate(state_dir, n, folds[n])
+        if next_pos is None:
+            return None, None, None
+        plan += subplan(state_pos, state_dir, n, folds[n], next_pos, next_dir)
+        state_pos = next_pos
+        state_dir = next_dir
+
+    img = [[' ' for _ in range(num_nodes * 4)] for __ in range(num_nodes * 4)]
+    img[2 * num_nodes][2 * num_nodes] = 'x'
+    for n in range(1, num_nodes):
+        x = state_pos[n][0]
+        y = state_pos[n][1]
+        img[2 * y][2 * x] = '.'
+    for n in range(0, num_nodes - 1):
+        x = state_pos[n][0]
+        y = state_pos[n][1]
+        direction = state_dir[n]
+        if direction == 'up':
+            img[2 * y + 1][2 * x] = '|'
+        elif direction == 'down':
+            img[2 * y - 1][2 * x] = '|'
+        elif direction == 'left':
+            img[2 * y][2 * x - 1] = '-'
+        elif direction == 'right':
+            img[2 * y][2 * x + 1] = '-'
 
     img_out = ''
     img = img[::-1]
@@ -62,17 +130,17 @@ def _genGoal(num_folds, num_nodes):
     prefix_len = min([len(l) - len(l.lstrip()) for l in img])
     img = [l[prefix_len:] for l in img]
     img_out = ';; ' + '\n;; '.join(img)
-    return pos, plan, img_out
+    return state_pos, plan, img_out
 
-def genGoal(num_folds, num_nodes, max_tries = 50):
-    for i in range(50):
+def genGoal(num_folds, num_nodes, scenario, max_tries = 5000):
+    for i in range(max_tries):
         print(f'Try {i}...', file = sys.stderr)
-        pos, plan, img = _genGoal(num_folds, num_nodes)
+        pos, plan, img = _genGoal(num_folds, num_nodes, scenario)
         if pos is not None:
             return pos, plan, img
     return None, None, None
 
-def main(num_nodes, num_folds, fnpddl, fnplan):
+def main(scenario, num_nodes, num_folds, fnpddl, fnplan):
     nodes = [f'n{i}' for i in range(1, num_nodes + 1)]
     coords = [f'c{i}' for i in range(1, num_nodes * 2)]
 
@@ -96,7 +164,7 @@ def main(num_nodes, num_folds, fnpddl, fnplan):
             if (x, y) not in init_pos:
                 free += [f'(free {x} {y})']
 
-    goal_pos, plan, goal_img = genGoal(num_folds, num_nodes)
+    goal_pos, plan, goal_img = genGoal(num_folds, num_nodes, scenario)
     if goal_pos is None:
         print('Error: Cannot find any random sequence!', file = sys.stderr)
         sys.exit(-1)
@@ -119,7 +187,7 @@ def main(num_nodes, num_folds, fnpddl, fnplan):
 
     rand = int(1000000 * random.random())
     out = f'''{goal_img}
-(define (problem reverse-folding-asp-{num_nodes}-{num_folds}-{rand})
+(define (problem reverse-folding-asp-{scenario}-{num_nodes}-{num_folds}-{rand})
 (:domain reverse-folding)
 
 (:objects
@@ -161,11 +229,15 @@ def main(num_nodes, num_folds, fnpddl, fnplan):
     with open(fnpddl, 'w') as fout:
         fout.write(out)
     with open(fnplan, 'w') as fout:
-        print(f';; Optimal cost: {len(plan)}', file = fout)
+        cost = len([a for a in plan if a.startswith('(rotate ')])
+        print(f';; Optimal cost: {cost}', file = fout)
+        for p in plan:
+            print(p, file = fout)
     return 0
 
 if __name__ == '__main__':
-    if len(sys.argv) != 5:
-        print(f'Usage: {sys.argv[0]} length num-folds prob.pddl prob.plan')
+    if len(sys.argv) != 6:
+        print(f'Usage: {sys.argv[0]} scenario length num-folds prob.pddl prob.plan')
+        print('  scenario: zigzag, spiral, bias-spiral')
         sys.exit(-1)
-    sys.exit(main(int(sys.argv[1]), int(sys.argv[2]), sys.argv[3], sys.argv[4]))
+    sys.exit(main(sys.argv[1], int(sys.argv[2]), int(sys.argv[3]), sys.argv[4], sys.argv[5]))
