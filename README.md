@@ -17,6 +17,9 @@ node of the string and rotating (bending) the string by 90 degrees clockwise or
 counterclockwise.
 
 
+This domain was submitted to International Planning Competition 2023 by
+Daniel Fišer <danfis@danfis.cz>.
+
 
 
 See
