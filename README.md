@@ -42,13 +42,3 @@ rightmost one is the goal:
 
 This domain was submitted to International Planning Competition 2023 by
 Daniel Fišer <danfis@danfis.cz>.
-
-
-
-
-See
- - https://link.springer.com/chapter/10.1007/978-3-642-20832-4_17 Section 6.1
- - https://www.mat.unical.it/aspcomp2011/FinalProblemDescriptions/ReverseFolding
-
-asp 2011:
-Andrea Formisano, Agostino Dovier and Enrico Pontelli
