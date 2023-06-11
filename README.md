@@ -16,6 +16,20 @@ At each step, the shape of the string can be changed by selecting an internal
 node of the string and rotating (bending) the string by 90 degrees clockwise or
 counterclockwise.
 
+An example where the leftmost configuration is the initial state and the rightmost one is the goal:
+```
+ | 
+ | 
+ | 
+ | 
+ | 
+ |    _ _ _ _ _ _    _ _     _ _     _ _ 
+ |   |              |   |   |   |   |   | 
+ |   |              |   |   |   |   | |_| 
+                        |      _| 
+                        | 
+```
+
 
 This domain was submitted to International Planning Competition 2023 by
 Daniel Fišer <danfis@danfis.cz>.
