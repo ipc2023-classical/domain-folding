@@ -19,7 +19,7 @@
 ;; nodes occupying the same point, which we avoid by taking two passes instead
 ;; of one.
 ;;
-(define (domain reverse-folding)
+(define (domain folding)
 (:requirements :adl :action-costs)
 
 (:types

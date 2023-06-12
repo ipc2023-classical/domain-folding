@@ -5,7 +5,7 @@ import os
 import random
 
 TOPDIR = os.path.dirname(os.path.realpath(__file__))
-GEN = os.path.join(TOPDIR, 'generator.py')
+GEN = os.path.join(TOPDIR, 'generate.py')
 
 for _ in range(int(sys.argv[1])):
     length = random.randint(8, 64)

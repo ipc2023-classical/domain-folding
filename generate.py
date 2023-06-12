@@ -187,8 +187,8 @@ def main(scenario, num_nodes, num_folds, fnpddl, fnplan):
 
     rand = int(1000000 * random.random())
     out = f'''{goal_img}
-(define (problem reverse-folding-asp-{scenario}-{num_nodes}-{num_folds}-{rand})
-(:domain reverse-folding)
+(define (problem folding-{scenario}-{num_nodes}-{num_folds}-{rand})
+(:domain folding)
 
 (:objects
     {nodes} - node

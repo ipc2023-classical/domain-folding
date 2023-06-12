@@ -1,4 +1,4 @@
-# Reverse Folding PDDL Domain
+# Folding PDDL Domain
 
 This domain is essentially a reformulation of the Answer Set Programming (ASP)
 problem called Reverse Folding
