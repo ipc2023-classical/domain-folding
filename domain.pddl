@@ -1,3 +1,24 @@
+;; A rotation (fold) at node n consists of one action rotate and two
+;; folllowing passes over to remaining part of string starting at n.
+;; In the first pass, all directions are corrected according to the
+;; rotation applied, and all (at this point incorrect) (at ...) facts are
+;; deleted. In the second pass, the correct (at ...) facts are set.
+;; The reason we use two passes instead of one is to avoid the intersection
+;; of the string with itself in the part that is currently moving. Consider
+;; the following string:
+;;        2-3
+;;        | |
+;;        1 4
+;; and suppose we want to rotate 1 counterclockwise which results in the
+;; following configuration:
+;;      3-4
+;;      |
+;;      2-1
+;; Now, note that 2 in the initial and 4 in the final configuration occupy
+;; the same point in the plane. So, with one pass, we could end up with two
+;; nodes occupying the same point, which we avoid by taking two passes instead
+;; of one.
+;;
 (define (domain reverse-folding)
 (:requirements :adl :action-costs)
 
@@ -112,7 +133,7 @@
 )
 
 ;; The second pass sets the coordinates of all nodes depending on the
-;; direction
+;; direction.
 (:action rotate-second-pass
     :parameters (?n1 - node ?n1x ?n1y - coord ?n1dir - direction
                  ?n2 - node ?n2x ?n2y - coord)
