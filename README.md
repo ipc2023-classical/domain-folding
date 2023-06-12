@@ -1,7 +1,7 @@
 # Reverse Folding PDDL Domain
 
 This domain is essentially a reformulation of the Answer Set Programming (ASP)
-problem of the same name
+problem called Reverse Folding
 [submitted](https://www.mat.unical.it/aspcomp2011/FinalProblemDescriptions/ReverseFolding)
 to the ASP Competition 2011 by Agostino Dovier (University of Udine, Italy),
 Andrea Formisano (University of Perugia, Italy), and Enrico Pontelli (New Mexico
@@ -14,7 +14,7 @@ Essays Dedicated to Michael Gelfond on the Occasion of His 65th Birthday,
 pages 259-279, Springer, Berlin, Heidelberg.
 [doi](https://doi.org/10.1007/978-3-642-20832-4_17))
 
-It is a simplification of a biology/chemistry problem:
+It is a simplification of a molecular biology problem:
 A string (e.g., representing a protein) composed of N consecutive elements at a
 fixed unitary distance lays on a 2D (cartesian) plane.
 At the beginning, the string forms a straight line and the goal is to fold the
@@ -42,3 +42,6 @@ rightmost one is the goal:
 
 This domain was submitted to International Planning Competition 2023 by
 Daniel Fišer <danfis@danfis.cz>.
+
+The PDDL domain file and and all accompanying scripts have been dedicated to the
+[public domain](https://en.wikipedia.org/wiki/Public_domain) by the authors.
