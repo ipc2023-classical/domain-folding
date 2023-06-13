@@ -134,7 +134,7 @@ def _genGoal(num_folds, num_nodes, scenario = 'zigzag'):
 
 def genGoal(num_folds, num_nodes, scenario, max_tries = 5000):
     for i in range(max_tries):
-        print(f'Try {i}...', file = sys.stderr)
+        #print(f'Try {i}...', file = sys.stderr)
         pos, plan, img = _genGoal(num_folds, num_nodes, scenario)
         if pos is not None:
             return pos, plan, img
@@ -237,7 +237,22 @@ def main(scenario, num_nodes, num_folds, fnpddl, fnplan):
 
 if __name__ == '__main__':
     if len(sys.argv) != 6:
-        print(f'Usage: {sys.argv[0]} scenario length num-folds prob.pddl prob.plan')
-        print('  scenario: zigzag, spiral, bias-spiral')
+        print(f'Usage: {sys.argv[0]} scenario length num-folds prob.pddl prob.plan',
+              file = sys.stderr)
+        print('  scenario: zigzag, spiral, bias-spiral', file = sys.stderr)
+        print('''
+This script generates a random task based on the given scenario.
+The task is generated so that is has a string consisting of {length}
+elements and it generates {num-folds} folds (rotations) over randomly
+selected sequence of elements of the string. There is at most one rotation
+per a string's element so the generated plan should be optimal, but I'm not
+completely sure of it.
+
+The scenarios change how the rotations are chosen:
+    zigzag: Randomly from (clockwise, counterclockwise)
+    spiral: Always choose clockise
+    bias-spiral: Randomly from (clockwise, clockwise, clockwise, counterclockwise),
+                 i.e., "it prefers spiral by allows some zigzag".
+''', file = sys.stderr)
         sys.exit(-1)
     sys.exit(main(sys.argv[1], int(sys.argv[2]), int(sys.argv[3]), sys.argv[4], sys.argv[5]))

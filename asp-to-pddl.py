@@ -115,4 +115,11 @@ def main(fn):
     return 0
 
 if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        print(f'Usage: {sys.argv[0]} prob.asp >prob.pddl', file = sys.stderr)
+        print('''
+This script translates the asp definition of the problem to the pddl
+formulation.
+''', file = sys.stderr)
+        sys.exit(-1)
     sys.exit(main(sys.argv[1]))
