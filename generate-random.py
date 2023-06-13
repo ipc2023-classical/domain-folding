@@ -14,7 +14,7 @@ if __name__ == '__main__':
 This script calls the generate.py script num-tasks times with random
 parameters. The names of the resulting .pddl and .plan files are
 p-{scenario}-{length-of-string}-{number-of-folds}.*
-''')
+''', file = sys.stderr)
         sys.exit(-1)
 
     for _ in range(int(sys.argv[1])):
