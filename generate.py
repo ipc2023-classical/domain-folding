@@ -4,6 +4,8 @@ import sys
 import random
 import copy
 
+CMD = None
+
 next_direction = {
         ('up', 'clockwise') : 'right',
         ('up', 'counterclockwise') : 'left',
@@ -132,7 +134,7 @@ def _genGoal(num_folds, num_nodes, scenario = 'zigzag'):
     img_out = ';; ' + '\n;; '.join(img)
     return state_pos, plan, img_out
 
-def genGoal(num_folds, num_nodes, scenario, max_tries = 5000):
+def genGoal(num_folds, num_nodes, scenario, max_tries = 10000):
     for i in range(max_tries):
         #print(f'Try {i}...', file = sys.stderr)
         pos, plan, img = _genGoal(num_folds, num_nodes, scenario)
@@ -186,7 +188,9 @@ def main(scenario, num_nodes, num_folds, fnpddl, fnplan):
     at_goal = '\n        '.join(at_goal)
 
     rand = int(1000000 * random.random())
-    out = f'''{goal_img}
+    out = f''';; Generated with: {CMD}
+{goal_img}
+;;
 (define (problem folding-{scenario}-{num_nodes}-{num_folds}-{rand})
 (:domain folding)
 
@@ -236,8 +240,8 @@ def main(scenario, num_nodes, num_folds, fnpddl, fnplan):
     return 0
 
 if __name__ == '__main__':
-    if len(sys.argv) != 6:
-        print(f'Usage: {sys.argv[0]} scenario length num-folds prob.pddl prob.plan',
+    if len(sys.argv) != 7:
+        print(f'Usage: {sys.argv[0]} seed scenario length num-folds prob.pddl prob.plan',
               file = sys.stderr)
         print('  scenario: zigzag, spiral, bias-spiral', file = sys.stderr)
         print('''
@@ -255,4 +259,8 @@ The scenarios change how the rotations are chosen:
                  i.e., "it prefers spiral by allows some zigzag".
 ''', file = sys.stderr)
         sys.exit(-1)
-    sys.exit(main(sys.argv[1], int(sys.argv[2]), int(sys.argv[3]), sys.argv[4], sys.argv[5]))
+
+    random.seed(int(sys.argv[1]))
+    CMD = './generate.py ' + ' '.join(sys.argv[1:])
+
+    sys.exit(main(sys.argv[2], int(sys.argv[3]), int(sys.argv[4]), sys.argv[5], sys.argv[6]))
